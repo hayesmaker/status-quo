@@ -1,16 +1,16 @@
 
 const fs = require('fs');
 const translate = require('translate');
-const path = require('path');
 const Encoding = require('encoding-japanese');
 require('dotenv').config();
 translate.from = 'ko';
 translate.engine = 'google';
 translate.key = process.env.GOOGLE_CLOUD_KEY;
 const FILE_PATH = './input/snakes-utf8.tsv';
-const OUTPUT_PATH = './output/snakes.json';
-const fileBuffer = fs.readFileSync(FILE_PATH);
+const OUTPUT_PATH = './output/snakes.txt';
+const MAX_RESULTS = 5; //-1 for all results
 
+const fileBuffer = fs.readFileSync(FILE_PATH);
 console.log(Encoding.detect(fileBuffer));
 
 fs.readFile(FILE_PATH, 'utf8', async function (err, contents) {
@@ -24,9 +24,8 @@ fs.readFile(FILE_PATH, 'utf8', async function (err, contents) {
             index: i
         }
     });
-    console.log("data", data.slice(0, 4));
-
     const outputData = [];
+    let outputStr = "";
 
     const t = async data => {
         try {
@@ -46,6 +45,7 @@ fs.readFile(FILE_PATH, 'utf8', async function (err, contents) {
                 let res = await t(data[i]);
                 console.log(res);
                 outputData.push(res);
+                outputStr += res.translation + "\n";
             } catch (e) {
                 console.log("Failed to convert language data (see error below) ", data[i]);
                 throw e
@@ -54,21 +54,24 @@ fs.readFile(FILE_PATH, 'utf8', async function (err, contents) {
     };
 
     try {
-        await tSeries(data.slice(0, 5));
+        await tSeries(data.slice(0, MAX_RESULTS >= 0? MAX_RESULTS : data.length));
         console.log('Successfully translated ' + outputData.length + ' translations');
-        console.log('Find Translations in ', path.join(__dirname, OUTPUT_PATH));
     } catch (e) {
         console.log(e);
     }
 
     const storeData = (data, path) => {
+        console.log("store", data);
         try {
-            fs.writeFileSync(path, JSON.stringify(data, null, 2));
+            fs.writeFile(path, data, () => {
+              if (err) return console.log(err);
+              console.log("Output created successfully at" + OUTPUT_PATH);
+            });
         } catch (err) {
             console.error(err)
         }
     };
 
-    storeData(outputData, OUTPUT_PATH);
+    storeData(outputStr, OUTPUT_PATH);
 });
 
