@@ -17,9 +17,10 @@
 - Create a translate APP  https://cloud.google.com/translate/docs/basic/setup-basic
 - Once the app is setup create a key in Credentials
 
-3/ create a file called `.env` and put in the root of this folder
- 
+3/ create a file called `.env` and put in the root of this folder and add this
+env var (you could add the env var to your system environment variables instead):
  ```angular2
+#env.js / environment variable
 GOOGLE_CLOUD_KEY={ENTER_YOUR_GOOGLE_CLOUD_KEY}
 ```
 
