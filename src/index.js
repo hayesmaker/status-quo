@@ -10,7 +10,7 @@ translate.key = process.env.GOOGLE_CLOUD_KEY;
 const FILE_PATH = './input/snakes-utf8.tsv';
 const OUTPUT_FOLDER = './output';
 const OUTPUT_PATH = OUTPUT_FOLDER + '/snakes.txt';
-const MAX_RESULTS = 5; //-1 for all results
+const MAX_RESULTS = -1; //-1 for all results
 
 const fileBuffer = fs.readFileSync(FILE_PATH);
 console.log(Encoding.detect(fileBuffer));
@@ -61,8 +61,9 @@ fs.readFile(FILE_PATH, 'utf8', async function (err, contents) {
     };
 
     try {
-        await tSeries(data.slice(0, MAX_RESULTS >= 0? MAX_RESULTS : data.length));
-        console.log('Successfully translated ' + outputData.length + ' translations');
+        await tSeries(data.slice(0, MAX_RESULTS >= 0? MAX_RESULTS : data.length - 1));
+        let numResults =  outputData.length;
+        console.log('Successfully translated ' + numResults + ' translations');
     } catch (e) {
         console.log(e);
     }
