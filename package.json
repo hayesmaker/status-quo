@@ -13,6 +13,6 @@
     "dotenv": "^8.2.0",
     "encoding-japanese": "^1.0.30",
     "mkdirp": "^1.0.4",
-    "translate": "^1.1.2"
+    "translate": "^1.4.1"
   }
 }
